@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Донер для Шатена</title>
+    <style>
+        body {
+            margin: 0; padding: 0; font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a; color: white;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden; touch-action: manipulation;
+        }
+        #game-container { text-align: center; width: 90%; }
+        #character {
+            width: 100%; max-width: 640px; height: auto;
+            border-radius: 15px; border: 4px solid #e74c3c;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+            transition: transform 0.1s;
+        }
+        .shaking { animation: shake 0.2s infinite; }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px); }
+            50% { transform: translate(-1px, -2px); }
+            100% { transform: translate(1px, 2px); }
+        }
+        #timer, #counter { font-size: 24px; margin: 10px 0; font-weight: bold; }
+        #timer { color: #f1c40f; }
+        #btn-doner {
+            background: #e67e22; border: none; padding: 20px 40px;
+            font-size: 30px; border-radius: 50px; color: white;
+            cursor: pointer; box-shadow: 0 5px #d35400;
+            active: transform: translateY(4px);
+        }
+        #btn-doner:active { transform: translateY(4px); box-shadow: 0 2px #d35400; }
+        #message { font-size: 20px; margin-top: 20px; color: #e74c3c; min-height: 1.2em; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="timer">Время: 10</div>
+    <div id="counter">Донеров: 0 / 50</div>
+    
+    <!-- Вставь ссылку на свою картинку ниже -->
+    <img id="character" src="[https://raw.githubusercontent.com/Arina-Artist/shaten-game/main/andrey.png](https://raw.githubusercontent.com/Arina-Artist/shaten-game/main/andrey.png)" alt="Андрюха">
+    
+    <div id="message">УСПЕЙ ПОКОРМИТЬ, ПОКА ОН НЕ ВЗОРВАЛСЯ!</div>
+    <br>
+    <button id="btn-doner" onclick="tap()">🌯 КОРМИТЬ!</button>
+</div>
+
+<script>
+    let clicks = 0;
+    let timeLeft = 10;
+    let gameActive = true;
+    const target = 50; // Нужно 50 кликов за 10 секунд
+
+    const timerEl = document.getElementById('timer');
+    const counterEl = document.getElementById('counter');
+    const charImg = document.getElementById('character');
+    const messageEl = document.getElementById('message');
+
+    let timerId = setInterval(() => {
+        if (!gameActive) return;
+        timeLeft--;
+        timerEl.innerText = `Время: ${timeLeft}`;
+        
+        if (timeLeft <= 0) {
+            endGame();
+        }
+    }, 1000);
+
+    function tap() {
+        if (!gameActive) return;
+        clicks++;
+        counterEl.innerText = `Донеров: ${clicks} / ${target}`;
+        
+        // Эффект тряски при нажатии
+        charImg.classList.add('shaking');
+        setTimeout(() => charImg.classList.remove('shaking'), 100);
+
+        if (clicks >= target) {
+            winGame();
+        }
+    }
+
+    function winGame() {
+        gameActive = false;
+        clearInterval(timerId);
+        messageEl.style.color = "#2ecc71";
+        messageEl.innerText = "😏 Ладно, наелся. Сегодня ты живешь.";
+        charImg.style.borderColor = "#2ecc71";
+    }
+
+    function endGame() {
+        gameActive = false;
+        clearInterval(timerId);
+        if (clicks < target) {
+            messageEl.innerText = "😡 МАЛО!!! ТЫ ОПЯТЬ ВСЁ ИСПОРТИЛА!!!";
+            document.body.style.backgroundColor = "#400";
+        }
+    }
+</script>
+
+</body>
+</html>
